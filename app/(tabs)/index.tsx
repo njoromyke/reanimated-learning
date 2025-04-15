@@ -1,54 +1,40 @@
-import { Image, StyleSheet, Platform, Button } from "react-native";
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, withRepeat } from "react-native-reanimated";
+import { View, Button, StyleSheet } from "react-native";
+import React from "react";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
-import Svg, { Circle } from "react-native-svg";
+export default function App() {
+  const offset = useSharedValue<number>(0);
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-export default function HomeScreen() {
-  const r = useSharedValue(10);
-
-  const handlePress = () => {
-    r.value += 10;
-  };
-
-  const animatedProps = useAnimatedProps(() => ({
-    r: withTiming(r.value),
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: offset.value }],
   }));
 
+  const OFFSET = 40;
+
+  const handlePress = () => {
+    offset.value = withRepeat(withTiming(OFFSET), 0, true);
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Svg style={styles.svg}>
-        <AnimatedCircle cx="50%" cy="50%" fill="#b58df1" animatedProps={animatedProps} />
-      </Svg>{" "}
-      <Button onPress={handlePress} title="Click me" />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Animated.View style={[styles.box, style]} />
+      <Button title="shake" onPress={handlePress} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
+  container: {
+    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
-    gap: 8,
+    justifyContent: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-  svg: {
-    height: 250,
-    width: "100%",
+  box: {
+    width: 100,
+    height: 100,
+    margin: 50,
+    borderRadius: 15,
+    backgroundColor: "#b58df1",
   },
 });
