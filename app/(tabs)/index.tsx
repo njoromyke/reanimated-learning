@@ -1,4 +1,4 @@
-import Animated, { useSharedValue, withTiming, useAnimatedStyle, withRepeat } from "react-native-reanimated";
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, withRepeat, withSequence } from "react-native-reanimated";
 import { View, Button, StyleSheet } from "react-native";
 import React from "react";
 
@@ -10,9 +10,10 @@ export default function App() {
   }));
 
   const OFFSET = 40;
+  const TIME = 250;
 
   const handlePress = () => {
-    offset.value = withRepeat(withTiming(OFFSET), 0, true);
+    offset.value = withSequence(withTiming(-OFFSET, { duration: TIME / 2 }), withRepeat(withTiming(OFFSET, { duration: TIME }), 2), withTiming(0, { duration: TIME / 2 }));
   };
 
   return (
